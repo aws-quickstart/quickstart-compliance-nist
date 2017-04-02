@@ -408,10 +408,14 @@ Resources:
           !GetAtt
           - ProductionVpcTemplate
           - Outputs.rVPCProduction
-        pRouteTableProdPrivate:
+        pRouteTableProdPrivateA:
           !GetAtt
           - ProductionVpcTemplate
-          - Outputs.rRouteTableProdPrivate
+          - Outputs.rRouteTableProdPrivateA
+        pRouteTableProdPrivateB:
+          !GetAtt
+          - ProductionVpcTemplate
+          - Outputs.rRouteTableProdPrivateB
         pRouteTableProdPublic:
           !GetAtt
           - ProductionVpcTemplate
