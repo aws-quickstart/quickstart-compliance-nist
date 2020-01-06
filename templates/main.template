@@ -168,6 +168,10 @@ Mappings:
       ConfigRules: 'true'
       NatGateway: 'true'
       Glacier: 'true'
+    us-gov-east-1:
+      ConfigRules: 'true'
+      NatGateway: 'true'
+      Glacier: 'true'
     us-west-1:
       ConfigRules: 'true'
       NatGateway: 'true'
@@ -228,9 +232,13 @@ Mappings:
       InstanceType: m4.large
       InstanceTypeDatabase: db.m4.large
     us-gov-west-1:
-      AMZNLINUXHVM: ami-ffa61d9e
-      InstanceType: m4.large
-      InstanceTypeDatabase: db.m3.large
+      AMZNLINUXHVM: ami-6cfab40d
+      InstanceType: m5.large
+      InstanceTypeDatabase: db.m5.large
+    us-gov-east-1:
+      AMZNLINUXHVM: ami-28ed0d59
+      InstanceType: m5.large
+      InstanceTypeDatabase: db.m5.large
     us-west-1:
       AMZNLINUXHVM: ami-0bce08e823ed38bdd
       InstanceType: m4.large
@@ -240,10 +248,15 @@ Mappings:
       InstanceType: m4.large
       InstanceTypeDatabase: db.m4.large
 Conditions:
-  GovCloudCondition:
+  GovCloudWest:
     !Equals
     - !Ref AWS::Region
     - us-gov-west-1
+  GovCloudEast:
+    !Equals
+    - !Ref AWS::Region
+    - us-gov-east-1
+  GovCloudCondition: !Or [!Equals [!Ref "AWS::Region", us-gov-west-1], !Equals [!Ref "AWS::Region", us-gov-east-1]]
   LoadConfigRulesTemplate:
     !Equals
     - !Ref pSupportsConfig
