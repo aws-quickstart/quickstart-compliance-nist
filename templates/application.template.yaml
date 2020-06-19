@@ -1079,7 +1079,7 @@ Outputs:
     Value: !Ref rSecurityGroupRDS
   SurveyLink:
     Description: Please take a moment to complete the survey by clicking this link
-    Value: !Sub https://aws.au1.qualtrics.com/SE/?SID=SV_55sYYdtY1NhTTgN&qs=${COMPLIANCE_SURVEY_LINK}
+    Value:  https://aws.au1.qualtrics.com/SE/?SID=SV_55sYYdtY1NhTTgN&qs=${COMPLIANCE_SURVEY_LINK}
   Help:
     Description: For assistance or questions regarding this quickstart please email
       compliance-accelerator@amazon.com

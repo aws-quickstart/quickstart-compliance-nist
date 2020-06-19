@@ -1,0 +1,29 @@
+project:
+  name: quickstart-compliance-nist
+  owner: quickstart-eng@amazon.com
+  package_lambda: false
+  regions:
+  - us-east-1
+  - us-east-2
+  - us-west-1
+  - us-west-2
+  s3_bucket: ''
+tests:
+  compl-nist:
+    parameters:
+      QSS3BucketName: $[taskcat_autobucket]
+      QSS3BucketRegion: $[taskcat_current_region]
+      pAvailabilityZones: $[taskcat_genaz_2]
+      pDBPassword: $[taskcat_genpass_26]
+      pEC2KeyPair: $[taskcat_getkeypair]
+      pEC2KeyPairBastion: $[taskcat_getkeypair]
+      pNotifyEmail: distlist@example.org
+      pSupportsConfig: 'false'
+      pVPCTenancy: default
+    regions:
+    - us-east-1
+    - us-east-2
+    - us-west-1
+    - us-west-2
+    s3_bucket: ''
+    template: templates/main.template.yaml
