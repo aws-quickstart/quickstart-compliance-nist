@@ -1,7 +1,7 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 Description: Provides nesting for required stacks to deploy a full sample web application
-  with reverse proxy, ELBs, IAM, and other resources (for demonstration/POC/testing)
+  with reverse proxy, ELBs, IAM, and other resources (for demonstration/POC/testing) (qs-1qup6ra5c)
 Metadata:
   Stack:
     Value: 0

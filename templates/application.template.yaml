@@ -2,7 +2,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Provides nesting for required stacks to deploy a full sample web application
   with reverse proxy, ELBs, IAM, and other resources (for demonstration/POC/testing)
-  QS(0016)
+  (qs-1qup6ra54)
 Metadata:
   Stack:
     Value: 3
