@@ -19,4 +19,4 @@ global:
 tests:
   compl-nist:
     parameter_input: defaults.json
-    template_file: main.template
+    template_file: main.template.yaml

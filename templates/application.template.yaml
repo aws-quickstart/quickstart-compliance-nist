@@ -521,6 +521,16 @@ Resources:
             Action:
             - ec2:DescribeVolumes
             Resource: '*'
+      - PolicyName: aws-quick-start-s3-policy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Action:
+                - s3:GetObject
+              Resource: !Sub
+                - arn:${AWS::Partition}:s3:::${S3Bucket}/${QSS3KeyPrefix}*
+                - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+              Effect: Allow
   rWebInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
@@ -537,8 +547,6 @@ Resources:
         config:
           packages:
             yum:
-              nginx: []
-              java-1.6.0-openjdk-devel: []
               git: []
           files:
             /tmp/nginx/default.conf:
@@ -559,7 +567,11 @@ Resources:
               owner: root
               group: root
           commands:
-            01-nginx-setup:
+            00-enable_ngnix:
+              command: amazon-linux-extras install nginx1
+            01-enable_ngnix:
+              command: amazon-linux-extras install java-openjdk11
+            02-nginx-setup:
               command: |
                 #!/bin/bash
                 ## Nginx setup
@@ -730,6 +742,20 @@ Resources:
             Action:
             - ec2:DescribeVolumes
             Resource: '*'
+      - PolicyName: aws-quick-start-s3-policy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Action:
+              - s3:GetObject
+            Resource:
+              - !Sub
+                - arn:${AWS::Partition}:s3:::${S3Bucket}
+                - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+              - !Sub
+                - arn:${AWS::Partition}:s3:::${S3Bucket}/${QSS3KeyPrefix}*
+                - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+            Effect: Allow
   rAppInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
@@ -776,10 +802,14 @@ Resources:
         install_wordpress:
           packages:
             yum:
-              php: []
-              php-mysql: []
-              mysql: []
               httpd: []
+          commands:
+            0_enable_mariadb:
+              command: amazon-linux-extras enable lamp-mariadb10.2-php7.2
+            1_yum_clean:
+              command: yum clean metadata
+            2_php_install:
+              command: yum install -y php-cli php-pdo php-fpm php-json php-mysqlnd mariadb
           sources:
             /var/www/html: https://wordpress.org/latest.tar.gz
           files:
@@ -872,10 +902,11 @@ Resources:
             ######################################################################
 
             # Download the landing page.
-            sudo wget https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}assets/landing/landing.html -O $LANDING_PAGE
+            sudo aws s3 cp --region=${S3Region} s3://${S3Bucket}/${QSS3KeyPrefix}assets/landing/landing.html $LANDING_PAGE
 
             # Replace relative image links with links to the production S3 source.
-            sudo sed -i 's|images|https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}assets/landing/images|g' $LANDING_PAGE
+            sudo aws s3 cp --region=${S3Region} s3://${S3Bucket}/${QSS3KeyPrefix}assets/landing/images.zip /var/www/html/
+            sudo /usr/bin/unzip /var/www/html/images.zip -d /var/www/html/
 
             # Inject the landing page branding label.
             sudo sed -i "s|{compliance-body}|$COMPLIANCE_BODY_LABEL|g" $LANDING_PAGE
@@ -884,7 +915,10 @@ Resources:
             sudo sed -i "s|{compliance-body-survey-link}|$COMPLIANCE_SURVEY_LINK|g" $LANDING_PAGE
 
             # Inject the security control matrix file location.
-            sudo sed -i "s|{compliance-body-matrix}|https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}assets/$COMPLIANCE_MATRIX_FILENAME|g" $LANDING_PAGE
+            aws s3 cp --region=${S3Region} s3://${S3Bucket}/${QSS3KeyPrefix}assets/$COMPLIANCE_MATRIX_FILENAME /var/www/html/$COMPLIANCE_MATRIX_FILENAME
+            sudo sed -i "s|{compliance-body-matrix}|$COMPLIANCE_MATRIX_FILENAME|g" $LANDING_PAGE
+
+            #/opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource rAutoScalingGroupApp --region ${AWS::Region}
           - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
             S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
   rAutoScalingGroupApp:
@@ -1079,7 +1113,7 @@ Outputs:
     Value: !Ref rSecurityGroupRDS
   SurveyLink:
     Description: Please take a moment to complete the survey by clicking this link
-    Value:  https://aws.au1.qualtrics.com/SE/?SID=SV_55sYYdtY1NhTTgN&qs=${COMPLIANCE_SURVEY_LINK}
+    Value:  https://aws.au1.qualtrics.com/SE/?SID=SV_55sYYdtY1NhTTgN&qs=nist
   Help:
     Description: For assistance or questions regarding this quickstart please email
       compliance-accelerator@amazon.com
