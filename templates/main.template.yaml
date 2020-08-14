@@ -175,6 +175,10 @@ Mappings:
       ConfigRules: 'true'
       NatGateway: 'true'
       Glacier: 'true'
+    us-gov-east-1:
+      ConfigRules: 'true'
+      NatGateway: 'true'
+      Glacier: 'true'
     us-west-1:
       ConfigRules: 'true'
       NatGateway: 'true'
@@ -240,8 +244,8 @@ Mappings:
       InstanceTypeDatabase: db.m3.large
     us-gov-east-1:
       AMZN2LINUXHVM: ami-6fb25f1e
-      InstanceType: m4.large
-      InstanceTypeDatabase: db.m3.large
+      InstanceType: m5.large
+      InstanceTypeDatabase: db.m5.large
     us-west-1:
       AMZN2LINUXHVM: ami-05655c267c89566dd
       InstanceType: m4.large
@@ -393,7 +397,7 @@ Resources:
         pBastionInstanceType:
           !If
           - LaunchAsDedicatedInstance
-          - m4.large
+          - m5.large
           - t3.small
         pSupportsNatGateway:
           !FindInMap

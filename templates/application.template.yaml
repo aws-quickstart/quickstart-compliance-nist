@@ -191,6 +191,8 @@ Mappings:
       ELB: '033677994240'
     us-gov-west-1:
       ELB: '048591011584'
+    us-gov-east-1:
+      ELB: '190560391635'
     us-west-1:
       ELB: '027434742980'
     us-west-2:
