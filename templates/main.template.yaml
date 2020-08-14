@@ -394,7 +394,7 @@ Resources:
           !If
           - LaunchAsDedicatedInstance
           - m4.large
-          - t2.small
+          - t3.small
         pSupportsNatGateway:
           !FindInMap
           - RegionServiceSupport
