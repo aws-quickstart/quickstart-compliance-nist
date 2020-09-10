@@ -1,4 +1,4 @@
 [submodule "submodules/quickstart-compliance-common"]
 	path = submodules/quickstart-compliance-common
 	url = git@github.com:aws-quickstart/quickstart-compliance-common.git
-	branch = master
+	branch = main
